@@ -1,9 +1,0 @@
-__pycache__/
-*.pyc
-*.onnx
-*.png
-.gradle/
-build/
-*.apk
-local.properties
-.idea/
