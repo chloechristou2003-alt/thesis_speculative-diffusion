@@ -135,7 +135,7 @@ If you reference this work:
 
 ```
 Speculative Diffusion — Diploma Thesis, School of Applied Mathematical and
-Physical Sciences (ΣΕΜΦΕ), National Technical University of Athens (ΕΜΠ).
+Physical Sciences, National Technical University of Athens.
 ```
 
 ## License
