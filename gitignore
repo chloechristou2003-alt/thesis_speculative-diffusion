@@ -1,0 +1,33 @@
+# ── Draft model (regenerate with export_onnx_bksdm_fp16.py) ──
+# ~617 MB FP16 ONNX — exceeds GitHub's 100 MB file limit, keep it out of the repo.
+*.onnx
+
+# ── Generated output ──
+*.png
+*.jpg
+*.jpeg
+
+# ── Python ──
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.ipynb_checkpoints/
+
+# ── Android / Gradle ──
+.gradle/
+build/
+*.apk
+*.aab
+local.properties
+captures/
+.cxx/
+
+# ── IDE / OS ──
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
