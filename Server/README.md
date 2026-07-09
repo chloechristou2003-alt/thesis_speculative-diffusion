@@ -1,4 +1,4 @@
-# Server — Speculative Diffusion (cloud side)
+# Server - Speculative Diffusion (cloud side)
 
 The cloud half of the hybrid architecture. Runs the **target** model (Stable Diffusion 1.5) on a CUDA GPU, verifies draft trajectories sent from the Android client over MQTT, and returns accept/correct decisions. Also exports the **draft** model that the client runs on-device.
 
@@ -35,9 +35,9 @@ A CUDA GPU is required for the target model. The reference environment is a Kagg
 python export_onnx_bksdm_fp16.py
 ```
 
-Produces `draft_unet.onnx`. The script wraps the UNet so the ONNX graph keeps an **FP32 interface but FP16 weights** (Android sends FP32; inference runs in FP16 internally). FP16 is the minimum viable precision — INT8 was attempted but failed on activation outliers in the attention layers.
+Produces `draft_unet.onnx`. The script wraps the UNet so the ONNX graph keeps an **FP32 interface but FP16 weights** (Android sends FP32; inference runs in FP16 internally). FP16 is the minimum viable precision - INT8 was attempted but failed on activation outliers in the attention layers.
 
-> The script begins with a `%%writefile` magic — it's meant to be pasted into a Kaggle/Jupyter cell, which writes it to disk and runs it. Remove that first line to run it as a plain script.
+> The script begins with a `%%writefile` magic - it's meant to be pasted into a Kaggle/Jupyter cell, which writes it to disk and runs it. Remove that first line to run it as a plain script.
 
 Copy the resulting `draft_unet.onnx` into the Android app's `assets/` folder.
 
@@ -78,5 +78,5 @@ On shutdown (`Ctrl-C`), `print_metrics_summary()` prints per-session latency and
 
 ## Notes
 
-- The broker is a **public, unencrypted** HiveMQ instance. CLIP encoding runs server-side, so prompts leave the device — fine for a research prototype, not for production.
+- The broker is a **public, unencrypted** HiveMQ instance. CLIP encoding runs server-side, so prompts leave the device - fine for a research prototype, not for production.
 - Re-running the notebook cell auto-stops any prior server instance to avoid duplicate MQTT subscriptions.
