@@ -2,7 +2,7 @@
 
 Adapting speculative decoding to latent diffusion: a lightweight draft model runs on-device (Android) while the target model runs in the cloud, coordinated over MQTT.
 
-Diploma thesis — School of Applied Mathematical and Physical Sciences, National Technical University of Athens (NTUA).
+Diploma thesis - School of Applied Mathematical and Physical Sciences, National Technical University of Athens (NTUA).
 
 **Author:** Chloi Christou · **Supervisor:** Prof. Iakovos Venieris
 
@@ -14,11 +14,11 @@ Speculative decoding accelerates autoregressive LLMs by letting a small **draft*
 
 The result is a **hybrid edge–cloud architecture**:
 
-- **Draft model** — `BK-SDM-Tiny` (~323M params, FP16 ONNX), runs **on-device** on Android via ONNX Runtime. It cheaply proposes a chunk of `K` denoising steps.
-- **Target model** — `Stable Diffusion 1.5`, runs **in the cloud** (Kaggle T4 GPU). It verifies the proposed trajectory and corrects it where it diverges.
-- **Transport** — MQTT over a public HiveMQ broker, using a custom Big-Endian binary protocol.
+- **Draft model** - `BK-SDM-Tiny` (~323M params, FP16 ONNX), runs **on-device** on Android via ONNX Runtime. It cheaply proposes a chunk of `K` denoising steps.
+- **Target model** - `Stable Diffusion 1.5`, runs **in the cloud** (Kaggle T4 GPU). It verifies the proposed trajectory and corrects it where it diverges.
+- **Transport** - MQTT over a public HiveMQ broker, using a custom Big-Endian binary protocol.
 
-BK-SDM-Tiny is a distilled student of SD 1.5, so the two models share the same VAE and CLIP text encoder — which keeps the draft and target trajectories in the same latent space and makes verification meaningful.
+BK-SDM-Tiny is a distilled student of SD 1.5, so the two models share the same VAE and CLIP text encoder - which keeps the draft and target trajectories in the same latent space and makes verification meaningful.
 
 ## How it works
 
@@ -91,7 +91,7 @@ onnxruntime
 python server/export_onnx_bksdm_fp16.py
 ```
 
-This produces the FP16 ONNX draft UNet that the Android client loads. FP16 is the minimum viable precision — INT8 quantization was attempted but failed due to activation outliers in the UNet attention layers.
+This produces the FP16 ONNX draft UNet that the Android client loads. FP16 is the minimum viable precision - INT8 quantization was attempted but failed due to activation outliers in the UNet attention layers.
 
 ### 2. Run the server
 
@@ -119,7 +119,7 @@ All topics are namespaced under `speculative/session_2026`, QoS 1, with a custom
 | `decode_request` | Android → Server | request VAE decode of final latents |
 | `decoded` | Server → Android | PNG image bytes |
 
-> The broker is a **public, unencrypted** HiveMQ instance used for prototyping. CLIP text encoding runs server-side, so prompts leave the device — acceptable for a research prototype, but not for production without a private, TLS-secured broker.
+> The broker is a **public, unencrypted** HiveMQ instance used for prototyping. CLIP text encoding runs server-side, so prompts leave the device - acceptable for a research prototype, but not for production without a private, TLS-secured broker.
 
 ## Results
 
@@ -129,7 +129,7 @@ All topics are namespaced under `speculative/session_2026`, QoS 1, with a custom
 
 ## Positioning
 
-This work is best understood as a **hybrid on-device / cloud distributed architecture** for latent diffusion under real edge constraints, rather than the first application of speculative decoding to diffusion — concurrent published works explore the underlying analogy (e.g. De Bortoli et al. 2025; Wang et al. 2024). The contribution here is the practical edge–cloud split, the trajectory-level acceptance criterion, and the fall-forward correction mechanism deployed on commodity Android hardware.
+This work is best understood as a **hybrid on-device / cloud distributed architecture** for latent diffusion under real edge constraints, rather than the first application of speculative decoding to diffusion - concurrent published works explore the underlying analogy (e.g. De Bortoli et al. 2025; Wang et al. 2024). The contribution here is the practical edge–cloud split, the trajectory-level acceptance criterion, and the fall-forward correction mechanism deployed on commodity Android hardware.
 
 ## Citation
 
@@ -143,4 +143,4 @@ National Technical University of Athens (NTUA), supervised by Prof. Iakovos Veni
 
 ## License
 
-MIT — see [`LICENSE`](LICENSE).
+MIT - see [`LICENSE`](LICENSE).
