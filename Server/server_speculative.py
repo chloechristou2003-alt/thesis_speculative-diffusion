@@ -1,7 +1,7 @@
 """
 server_speculative.py
 ---------------------
-Speculative Diffusion Server -- Doubly Adaptive Thresholding.
+Speculative Diffusion Server -- Fixed Thresholding.
 
 Role:
   Receives draft trajectories from Android (over MQTT),
@@ -358,9 +358,12 @@ class SpeculativeServer:
                 self.metrics["all_rel_l2_eps"].clear()
                 _p(f"[SpecServer] -- NEW GENERATION (seed={req['seed']}) --")
 
+            # Fixed acceptance threshold (sent by Android as ACCEPT_THRESHOLD = 0.30)
+            tau = req["threshold"]
+
             # Override for debugging (threshold_override = None = normal operation)
             if self.threshold_override is not None:
-                tau_t = self.threshold_override
+                tau = self.threshold_override
 
             n_accepted, corrected, metrics = self.model_loader.verify_chunk(
                 states           = req["states"],
@@ -369,7 +372,7 @@ class SpeculativeServer:
                 prompt           = req["prompt"],
                 negative_prompt  = req["neg"],
                 cfg_scale        = req["cfg"],
-                accept_threshold = tau_t,
+                accept_threshold = tau,
             )
 
             rel_l2_eps = metrics["rel_l2_eps"]
@@ -383,7 +386,7 @@ class SpeculativeServer:
 
             _p(f"\n[SpecServer] VERIFY #{req_id} | "
                f"step={req['start_step_index']} K={K} | "
-               f"C_t={C_t:.3f} tau_t={tau_t:.3f}")
+               f"tau={tau:.3f}")
             _p(f"[SpecServer]   rel_l2_eps={fmt(rel_l2_eps)} -> {action}")
 
             response = self.encode_verify_response(req_id, n_accepted, corrected, metrics)
