@@ -17,11 +17,6 @@ MQTT Topics (prefix: speculative/session_2026):
   -> decode_request:      Android requests VAE decode latents -> PNG
   <- decoded:             Server sends PNG bytes
 
-Doubly Adaptive Thresholding:
-  tau_t = tau_base + gamma * C_t^3
-  tau_base: from Android (ACCEPT_THRESHOLD = 0.20)
-  gamma:    0.30 -> tau increases progressively (strict start, loose end)
-  C_t:      progress^3 (cubic schedule)
 """
 
 import io
@@ -109,10 +104,6 @@ class SpeculativeServer:
             "all_rel_l2_eps":      [],
         }
 
-        # Doubly Adaptive: tau_t = tau_base + gamma * C_t^3
-        # gamma=0.30 -> tau increases by 30% toward the end of generation
-        # Result: strict check early (accuracy), loose late (speed)
-        self.gamma              = 0.30
         self.threshold_override = None  # Override for debugging (None = normal operation)
 
         self.client = None
@@ -341,11 +332,9 @@ class SpeculativeServer:
     # _handle_verify -- Core verification handler
     #
     # 1. Parse request (trajectory + metadata)
-    # 2. Compute the Doubly Adaptive threshold:
-    #      tau_t = tau_base + gamma * progress^3
-    # 3. verify_chunk: batched forward pass + prefix acceptance
-    # 4. Encode + publish the response
-    # 5. On error: publish verify_error with a sanitized message
+    # 2. verify_chunk: batched forward pass + prefix acceptance
+    # 3. Encode + publish the response
+    # 4. On error: publish verify_error with a sanitized message
     #
     # Reset metrics on the first chunk of each generation (start_step_index==0)
 
@@ -368,12 +357,6 @@ class SpeculativeServer:
                 self.metrics["all_rel_l2_x"].clear()
                 self.metrics["all_rel_l2_eps"].clear()
                 _p(f"[SpecServer] -- NEW GENERATION (seed={req['seed']}) --")
-
-            # Doubly Adaptive Threshold
-            tau_base = req["threshold"]                               # 0.20 from Android
-            progress = req["start_step_index"] / max(1, req["total_steps"])
-            C_t      = progress ** 3                                  # cubic schedule
-            tau_t    = tau_base + self.gamma * C_t                    # 0.20 -> 0.50 max
 
             # Override for debugging (threshold_override = None = normal operation)
             if self.threshold_override is not None:
